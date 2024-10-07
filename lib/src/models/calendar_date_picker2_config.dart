@@ -649,6 +649,7 @@ class CalendarDatePicker2WithActionButtonsConfig
     this.gapBetweenCalendarAndButtons,
     this.cancelButtonTextStyle,
     this.cancelButton,
+    this.clearButton,
     this.okButtonTextStyle,
     this.okButton,
     this.openedFromDialog,
@@ -730,6 +731,9 @@ class CalendarDatePicker2WithActionButtonsConfig
 
   /// Text style for cancel button
   final TextStyle? cancelButtonTextStyle;
+
+  /// Custom clear button
+  final Widget? clearButton;
 
   /// Custom cancel button
   final Widget? cancelButton;

@@ -10,6 +10,7 @@ class CalendarDatePicker2WithActionButtons extends StatefulWidget {
     this.onDisplayedMonthChanged,
     this.onCancelTapped,
     this.onOkTapped,
+    this.onClearTapped,
     Key? key,
   }) : super(key: key) {
     if (config.calendarViewMode == CalendarDatePicker2Mode.scroll) {
@@ -37,6 +38,9 @@ class CalendarDatePicker2WithActionButtons extends StatefulWidget {
 
   /// The callback when ok button is tapped
   final Function? onOkTapped;
+
+  /// The callback when clear button is tapped
+  final Function? onClearTapped;
 
   @override
   State<CalendarDatePicker2WithActionButtons> createState() =>
@@ -99,6 +103,8 @@ class _CalendarDatePicker2WithActionButtonsState
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            _buildClearButton(Theme.of(context).colorScheme, localizations),
+            Expanded(child: Container()),
             _buildCancelButton(Theme.of(context).colorScheme, localizations),
             if ((widget.config.gapBetweenCalendarAndButtons ?? 0) > 0)
               SizedBox(width: widget.config.gapBetweenCalendarAndButtons),
@@ -127,6 +133,38 @@ class _CalendarDatePicker2WithActionButtonsState
         child: widget.config.cancelButton ??
             Text(
               localizations.cancelButtonLabel.toUpperCase(),
+              style: widget.config.cancelButtonTextStyle ??
+                  TextStyle(
+                    color: widget.config.selectedDayHighlightColor ??
+                        colorScheme.primary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+            ),
+      ),
+    );
+  }
+
+  Widget _buildClearButton(
+      ColorScheme colorScheme, MaterialLocalizations localizations) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(5),
+      onTap: () => setState(() {
+        _values = [DateTime.now(), DateTime.now()];
+        _editCache = _values;
+        widget.onValueChanged?.call(_values);
+        widget.onClearTapped?.call();
+        widget.onOkTapped?.call();
+        if ((widget.config.openedFromDialog ?? false)) {
+          Navigator.pop(context, _values);
+        }
+      }),
+      child: Container(
+        padding: widget.config.buttonPadding ??
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        child: widget.config.clearButton ??
+            Text(
+              localizations.clearButtonTooltip.toUpperCase().split(' ')[0],
               style: widget.config.cancelButtonTextStyle ??
                   TextStyle(
                     color: widget.config.selectedDayHighlightColor ??
